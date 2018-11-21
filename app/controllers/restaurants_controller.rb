@@ -1,11 +1,11 @@
 class RestaurantsController < ApplicationController
   before_action :set_restaurant, only: [:show, :edit, :update, :destroy]
+
   def index
     @restaurants = Restaurant.all
   end
 
   def show
-
   end
 
   def new
@@ -15,13 +15,28 @@ class RestaurantsController < ApplicationController
   def edit
   end
 
+
   def create
+    @restaurant = Restaurant.new(restaurant_params)
+    if @restaurant.save
+      redirect_to restaurant_path(@restaurant)
+    else
+      render :new
+    end
   end
 
   def update
+    @restaurant = Restaurant.find(params[:id])
+    @restaurant.update(restaurant_params)
+    redirect_to restaurant_path(@restaurant)
   end
 
   def destroy
+    @restaurant.destroy
+    respond_to do |format|
+      format.html { redirect_to restaurants_url, notice: 'Restaurant was successfully destroyed.' }
+      format.json { head :no_content }
+    end
   end
 
   private
@@ -32,7 +47,7 @@ class RestaurantsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def restaurant_params
-      params.require(:restaurant).permit(:name, :address, :description, :stars)
+      params.require(:restaurant).permit(:name, :address, :category, :phone_number)
     end
 
 end
